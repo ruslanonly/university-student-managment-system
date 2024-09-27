@@ -3,7 +3,7 @@ import express, { type Express } from "express";
 import helmet from "helmet";
 import { pino } from "pino";
 
-import { studentRouter } from "@/api/student/studentRouter";
+import { studentRouter } from "@/api/student/student-router";
 import errorHandler from "@/common/middleware/errorHandler";
 import rateLimiter from "@/common/middleware/rateLimiter";
 import requestLogger from "@/common/middleware/requestLogger";
