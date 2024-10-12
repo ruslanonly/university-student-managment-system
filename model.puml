@@ -1,0 +1,51 @@
+@startuml
+
+entity Department {
+
+}
+
+entity Group {
+
+}
+
+entity Student {
+
+}
+
+entity Course {
+
+}
+
+entity Schedule {
+  date: time
+}
+
+entity Class {
+  id 
+}
+
+entity Material {
+  id
+  content: text
+}
+
+entity Attendance {
+  id 
+  status: bool
+}
+
+Material "*" -- "1" Class
+
+Schedule "1" -- "*" Class
+Schedule "1" -- "*" Group
+
+Attendance -- Schedule
+Attendance -- Student
+
+Student "*" -- "1" Group
+
+Course "1" -- "*" Class
+
+Course "*" -- "1" Department
+
+@enduml
