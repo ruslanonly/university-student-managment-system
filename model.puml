@@ -34,18 +34,22 @@ entity Attendance {
   status: bool
 }
 
+entity Specialization {}
+
 Material "*" -- "1" Class
 
 Schedule "1" -- "*" Class
 Schedule "1" -- "*" Group
 
-Attendance -- Schedule
-Attendance -- Student
+Attendance "*" -- "1" Schedule
+Attendance "1" -- "1" Student
 
 Student "*" -- "1" Group
 
 Course "1" -- "*" Class
 
-Course "*" -- "1" Department
+Course "*" -- "*" Specialization
+
+Department "*" -- "*" Specialization
 
 @enduml
