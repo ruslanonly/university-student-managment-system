@@ -1,0 +1,3 @@
+- Department - Кафедра
+- Course - Дисциплина
+- Class - Пара

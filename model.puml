@@ -1,19 +1,20 @@
 @startuml
 
 entity Department {
-
+  name
 }
 
 entity Group {
-
+  name
 }
 
 entity Student {
-
+  grade_book_id
+  full_name
 }
 
 entity Course {
-
+  name
 }
 
 entity Schedule {
@@ -34,7 +35,9 @@ entity Attendance {
   status: bool
 }
 
-entity Specialization {}
+entity Specialization {
+  name
+}
 
 Material "*" -- "1" Class
 
