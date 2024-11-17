@@ -1,48 +1,82 @@
 @startuml
 
 entity Department {
+  id
   name
+  institute_id: fk
 }
 
 entity Group {
+  id
   name
 }
 
 entity Student {
   grade_book_id
   full_name
+  group_id: fk
 }
 
 entity Course {
+  id
   name
 }
 
 entity Schedule {
   date: time
+  class_id: fk
+  group_id: fk
 }
 
 entity Class {
   id 
+  course_id: fk
 }
 
 entity Material {
   id
   content: text
+  class_id: fk
 }
 
 entity Attendance {
   id 
-  status: bool
+  status
+  date
+  student_id: fk
+  schedule_id: fk
 }
 
 entity Specialization {
+  id
   name
+}
+
+entity Institute {
+  id 
+  name
+  university_id: fk
+}
+
+entity University {
+  id
+  name
+}
+
+entity DepartmentSpecialization {
+  department_id: fk
+  specialization_id: fk
+}
+
+entity SpecializationCourse {
+  specialization_id: fk
+  course_id: fk
 }
 
 Material "*" -- "1" Class
 
-Schedule "1" -- "*" Class
-Schedule "1" -- "*" Group
+Schedule "*" -- "1" Class
+Schedule "*" -- "1" Group
 
 Attendance "*" -- "1" Schedule
 Attendance "1" -- "1" Student
@@ -51,8 +85,15 @@ Student "*" -- "1" Group
 
 Course "1" -- "*" Class
 
-Course "*" -- "*" Specialization
+University "1" -- "*" Institute
 
-Department "*" -- "*" Specialization
+Institute "1" -- "*" Department
+
+Department "1" -- "*" DepartmentSpecialization
+
+DepartmentSpecialization "*" -- "1" Specialization
+
+Specialization "1" -- "*" SpecializationCourse
+SpecializationCourse "*" -- "1" Course
 
 @enduml
