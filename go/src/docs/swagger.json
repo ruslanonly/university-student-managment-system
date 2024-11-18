@@ -1,0 +1,69 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "University Report Generation System",
+        "contact": {},
+        "version": "0.1"
+    },
+    "basePath": "/",
+    "paths": {
+        "/auth/{provider}": {
+            "get": {
+                "description": "Начать авторизацию по протоколу OAuth 2.0",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OAuth"
+                ],
+                "summary": "Начать авторизацию по протоколу OAuth 2.0",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Название провайдера",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/auth/{provider}/callback": {
+            "get": {
+                "description": "Завершить авторизацию по протоколу OAuth 2.0",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OAuth"
+                ],
+                "summary": "Завершить авторизацию по протоколу OAuth 2.0",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Название провайдера",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    }
+}

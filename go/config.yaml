@@ -1,0 +1,23 @@
+http_server:
+  address: ":5000"
+  write_timeout: 15
+  read_timeout: 15
+  idle_timeout: 15
+  graceful_shutdown_timeout: 10
+  swagger:
+    login: "admin"
+    password: "admin"
+    endpoint: "http://localhost:5000"
+cookie:
+  secret: "cookie_secret"
+  max_age: 3600
+logger:
+  mode: "dev"
+providers:
+  google:
+    client_key: "353483397634-q3k88d41v1idd2q26u25k0amurjgl4p8.apps.googleusercontent.com"
+    secret: "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"
+    callback_url: "http://localhost:5000/auth/google/callback"
+    scopes:
+      - "email"
+      - "profile"

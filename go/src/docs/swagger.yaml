@@ -1,0 +1,45 @@
+basePath: /
+info:
+  contact: {}
+  title: University Report Generation System
+  version: "0.1"
+paths:
+  /auth/{provider}:
+    get:
+      consumes:
+      - application/json
+      description: Начать авторизацию по протоколу OAuth 2.0
+      parameters:
+      - description: Название провайдера
+        in: path
+        name: provider
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Начать авторизацию по протоколу OAuth 2.0
+      tags:
+      - OAuth
+  /auth/{provider}/callback:
+    get:
+      consumes:
+      - application/json
+      description: Завершить авторизацию по протоколу OAuth 2.0
+      parameters:
+      - description: Название провайдера
+        in: path
+        name: provider
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Завершить авторизацию по протоколу OAuth 2.0
+      tags:
+      - OAuth
+swagger: "2.0"
