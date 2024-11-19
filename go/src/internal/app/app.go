@@ -91,7 +91,8 @@ func (a *App) Run() {
 
 	a.useCookies()
 	a.useProviders()
-	a.inject()
+	cleanup := a.inject()
+	defer cleanup()
 	a.serveHTTP()
 }
 

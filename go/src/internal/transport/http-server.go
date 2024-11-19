@@ -80,8 +80,10 @@ func (s *HTTPServer) Run() {
 }
 
 func NewHTTPServer(log *slog.Logger, cfg *Config, authHandler *authHandler.Handler) *HTTPServer {
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID, middleware.RealIP, middleware.Logger, middleware.Recoverer)
 	return &HTTPServer{
-		router:      chi.NewRouter(),
+		router:      r,
 		log:         log,
 		cfg:         cfg,
 		authHandler: authHandler,

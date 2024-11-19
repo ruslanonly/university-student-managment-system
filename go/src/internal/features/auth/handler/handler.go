@@ -4,13 +4,17 @@ import (
 	"context"
 	"github.com/go-chi/chi/v5"
 	"github.com/markbates/goth/gothic"
+	"github.com/ruslanonly/university-student-managment-system/src/internal/features/auth"
+	"github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/core/service"
 	"github.com/ruslanonly/university-student-managment-system/src/pkg/api/res"
 	"log/slog"
 	"net/http"
 )
 
 type Handler struct {
-	log *slog.Logger
+	log         *slog.Logger
+	authService *service.AuthService
+	cfg         *auth.Config
 }
 
 // OAuth godoc
@@ -55,11 +59,45 @@ func (h *Handler) OAuthCallback(w http.ResponseWriter, r *http.Request) {
 
 	h.log.Info("user", user)
 
-	res.WriteJSON(w, http.StatusOK, user)
+	accessToken, refreshToken, err := h.authService.Login(r.Context(), service.LoginDTO{Username: user.Email})
+
+	if err != nil {
+		res.WriteError(w, http.StatusInternalServerError, err, err.Error())
+		return
+	}
+
+	accessTokenCookie := http.Cookie{
+		Name:     "accessToken",
+		Value:    string(accessToken),
+		Path:     "/",
+		MaxAge:   h.cfg.AccessTokenTTL,
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	http.SetCookie(w, &accessTokenCookie)
+
+	refreshTokenCookie := http.Cookie{
+		Name:     "refreshToken",
+		Value:    string(refreshToken),
+		Path:     "/",
+		MaxAge:   h.cfg.RefreshTokenTTL,
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
+	}
+
+	http.SetCookie(w, &refreshTokenCookie)
+	http.Redirect(w, r, h.cfg.RedirectURL, http.StatusPermanentRedirect)
 }
 
-func New(log *slog.Logger) *Handler {
-	return &Handler{log: log}
+func New(log *slog.Logger, cfg *auth.Config, authService *service.AuthService) *Handler {
+	return &Handler{
+		log:         log,
+		authService: authService,
+		cfg:         cfg,
+	}
 }
 
 func Init(r *chi.Mux, h *Handler) {

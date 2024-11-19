@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/ruslanonly/university-student-managment-system/src/internal/features/auth"
 	"github.com/ruslanonly/university-student-managment-system/src/internal/transport"
 	"github.com/ruslanonly/university-student-managment-system/src/pkg/logger"
 )
@@ -21,9 +22,15 @@ type cookieConfig struct {
 	MaxAge int    `yaml:"max_age"`
 }
 
+type Postgres struct {
+	ConnectionString string `yaml:"connection_string"`
+}
+
 type config struct {
 	HTTPServer transport.Config `yaml:"http_server"`
 	Logger     logger.Config    `yaml:"logger"`
 	Providers  providersConfig  `yaml:"providers"`
 	Cookie     cookieConfig     `yaml:"cookie"`
+	Auth       auth.Config      `yaml:"auth"`
+	Postgres   Postgres         `yaml:"postgres"`
 }

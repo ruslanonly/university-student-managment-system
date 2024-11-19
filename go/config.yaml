@@ -12,7 +12,7 @@ cookie:
   secret: "cookie_secret"
   max_age: 3600
 logger:
-  mode: "dev"
+  level: "debug"
 providers:
   google:
     client_key: "353483397634-q3k88d41v1idd2q26u25k0amurjgl4p8.apps.googleusercontent.com"
@@ -21,3 +21,10 @@ providers:
     scopes:
       - "email"
       - "profile"
+auth:
+  secret: "Hgpt130dgh"
+  access_token_ttl: 3600
+  refresh_token_ttl: 100000
+  redirect_url: "http://localhost:5000/swagger/index.html"
+postgres:
+  connection_string: "postgres://user:user@localhost:5432/user"
