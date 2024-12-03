@@ -23,6 +23,7 @@ entity Course {
 }
 
 entity Schedule {
+  id: pk
   date: time
   class_id: fk
   group_id: fk
@@ -31,6 +32,7 @@ entity Schedule {
 entity Class {
   id 
   course_id: fk
+  type
 }
 
 entity Material {
