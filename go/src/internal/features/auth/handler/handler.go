@@ -60,7 +60,7 @@ func (h *Handler) OAuthCallback(w http.ResponseWriter, r *http.Request) {
 
 	h.log.Info("user", user)
 
-	accessToken, err := h.authService.Login(r.Context(), service.LoginDTO{Username: user.Email})
+	accessToken, err := h.authService.Login(r.Context(), service.LoginDTO{UserID: user.UserID})
 
 	if err != nil {
 		res.WriteError(w, http.StatusInternalServerError, err, err.Error())

@@ -21,7 +21,7 @@ func New(
 
 func (s *AuthService) Login(_ context.Context, dto LoginDTO) (model.AccessToken, error) {
 	// Создание AccessToken
-	accessToken, err := model.CreateAccessToken(s.cfg.Secret, dto.Username, s.cfg.AccessTokenTTL)
+	accessToken, err := model.CreateAccessToken(s.cfg.Secret, dto.UserID, s.cfg.AccessTokenTTL)
 	if err != nil {
 		return "", err
 	}

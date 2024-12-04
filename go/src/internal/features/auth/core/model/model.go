@@ -12,7 +12,7 @@ var (
 
 type AccessToken string
 
-func CreateAccessToken(secretKey string, userID int, ttl int) (AccessToken, error) {
+func CreateAccessToken(secretKey string, userID string, ttl int) (AccessToken, error) {
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": userID,
 		"iss": "university-student-management-system",
