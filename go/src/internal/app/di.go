@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/jackc/pgx/v4"
 	authService "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/core/service"
-	sessionRepository "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/data/session-repository"
 	authHandler "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/handler"
 )
 
@@ -19,9 +18,7 @@ func (a *App) inject() func() {
 		panic(err)
 	}
 
-	sessionRepositoryImpl := sessionRepository.New(conn)
-
-	authServiceImpl := authService.New(sessionRepositoryImpl, &a.cfg.Auth)
+	authServiceImpl := authService.New(&a.cfg.Auth)
 
 	container := &diContainer{
 		authHandler: authHandler.New(a.log, &a.cfg.Auth, authServiceImpl),

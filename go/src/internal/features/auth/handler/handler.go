@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/markbates/goth/gothic"
 	"github.com/ruslanonly/university-student-managment-system/src/internal/features/auth"
 	"github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/core/service"
@@ -59,36 +60,15 @@ func (h *Handler) OAuthCallback(w http.ResponseWriter, r *http.Request) {
 
 	h.log.Info("user", user)
 
-	accessToken, refreshToken, err := h.authService.Login(r.Context(), service.LoginDTO{Username: user.Email})
+	accessToken, err := h.authService.Login(r.Context(), service.LoginDTO{Username: user.Email})
 
 	if err != nil {
 		res.WriteError(w, http.StatusInternalServerError, err, err.Error())
 		return
 	}
 
-	accessTokenCookie := http.Cookie{
-		Name:     "accessToken",
-		Value:    string(accessToken),
-		Path:     "/",
-		MaxAge:   h.cfg.AccessTokenTTL,
-		HttpOnly: true,
-		Secure:   false,
-		SameSite: http.SameSiteLaxMode,
-	}
+	setAccessToken(w, h.cfg, accessToken)
 
-	http.SetCookie(w, &accessTokenCookie)
-
-	refreshTokenCookie := http.Cookie{
-		Name:     "refreshToken",
-		Value:    string(refreshToken),
-		Path:     "/",
-		MaxAge:   h.cfg.RefreshTokenTTL,
-		HttpOnly: true,
-		Secure:   false,
-		SameSite: http.SameSiteLaxMode,
-	}
-
-	http.SetCookie(w, &refreshTokenCookie)
 	http.Redirect(w, r, h.cfg.RedirectURL, http.StatusPermanentRedirect)
 }
 
@@ -102,6 +82,7 @@ func New(log *slog.Logger, cfg *auth.Config, authService *service.AuthService) *
 
 func Init(r *chi.Mux, h *Handler) {
 	r.Route("/auth", func(r chi.Router) {
+		r.Use(middleware.RequestID)
 		r.Get("/{provider}", h.OAuth)
 		r.Get("/{provider}/callback", h.OAuthCallback)
 	})
