@@ -1,0 +1,14 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "document_id": { "type": "integer" },
+      "content": { "type": "text", "analyzer": "standard" },
+      "class_id": { "type": "integer" },
+      "index_name": { "type": "keyword" }
+    }
+  }
+}

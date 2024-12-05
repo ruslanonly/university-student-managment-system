@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+        container_name: elasticsearch
+        environment:
+            - discovery.type=single-node
+            - ES_JAVA_OPTS=-Xms512m -Xmx512m
+        ports:
+            - "9200:9200"
+            - "9300:9300"
+        volumes:
+            - es_data:/usr/share/elasticsearch/data
+            - ./logs/elasticsearch:/usr/share/elasticsearch/logs
+    elastic-init:
+        image: curlimages/curl:7.78.0
+        container_name: elastic-init
+        depends_on:
+            - elasticsearch
+        volumes:
+            - ./migrations:/migrations
+        entrypoint: /bin/sh
+        command: >
+          -c "
+            echo 'Waiting for Elasticsearch...' &&
+            until curl -s http://elasticsearch:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'; do sleep 5
+            done &&
+            echo 'Elasticsearch is ready. Creating the materials index...' &&
+            curl -XPUT 'http://elasticsearch:9200/material' -H 'Content-Type: application/json' -d @/migrations/materials_es.json &&
+            echo 'Index created. Inserting bulk data from materials_data.json...' &&
+            curl -XPOST 'http://elasticsearch:9200/material/_bulk' -H 'Content-Type: application/json' --data-binary @/migrations/materials_data.json &&
+            echo 'Bulk insert completed.'
+          "
+
+    neo4j:
+        image: neo4j:latest
+        container_name: neo4j
+        environment:
+            NEO4J_AUTH: neo4j/password
+        ports:
+            - "7474:7474"
+            - "7687:7687"
+        volumes:
+            - neo4j_data:/data
+            - ./logs/neo4j:/logs
+            - ./migrations/students-neo4j.cql:/var/lib/neo4j/import/students-neo4j.cql
+        command: >
+            /bin/bash -c "
+            neo4j start &&
+            sleep 30 &&
+            cypher-shell -u neo4j -p password -f /var/lib/neo4j/import/students-neo4j.cql
+            "
+
+volumes:
+    es_data:
+    neo4j_data:
