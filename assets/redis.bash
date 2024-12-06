@@ -1,8 +1,6 @@
 # Hash
 student:<gradebook_id>
-  ├── first_name: string
-  ├── second_name: string
-  ├── middle_name: string
+  ├── full_name: string
   ├── group_id: number
   └── group_name: string
 
