@@ -38,7 +38,7 @@ services:
         volumes:
             - mongo_data:/data/db
             - ./logs/mongo:/var/log/mongodb
-            - ./migrations/students_mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+            - ./migrations/mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
 volumes:
     postgres_data:
     redis_data:
