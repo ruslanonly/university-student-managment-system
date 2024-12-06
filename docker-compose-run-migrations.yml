@@ -48,7 +48,7 @@ services:
         command: >
             /bin/bash -c "
             neo4j start &&
-            sleep 30 &&
+            sleep 15 &&
             cypher-shell -u neo4j -p password -f /var/lib/neo4j/import/students-neo4j.cql
             "
 

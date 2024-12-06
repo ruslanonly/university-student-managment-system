@@ -12,6 +12,9 @@ services:
             - "5432:5432"
         volumes:
             - postgres_data:/var/lib/postgresql/data
+            - ./logs/postgres:/var/log/postgresql
+            - ./migrations/postgres.sql:/docker-entrypoint-initdb.d/init.sql
+        command: ["postgres", "-c", "logging_collector=on", "-c", "log_directory=/var/log/postgresql", "-c", "log_statement=all"]
 
     redis:
         image: redis:latest
@@ -20,7 +23,10 @@ services:
             - "6379:6379"
         volumes:
             - redis_data:/data
-
+            - ./logs/redis:/var/log/redis
+            - ./migrations/redis.sh:/some_dir/redis.sh
+        command: ["/some_dir/redis.sh"]
+    
     mongodb:
         image: mongo:latest
         container_name: mongodb
@@ -31,30 +37,8 @@ services:
             - "27017:27017"
         volumes:
             - mongo_data:/data/db
-
-    elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
-        container_name: elasticsearch
-        environment:
-            - discovery.type=single-node
-            - ES_JAVA_OPTS=-Xms512m -Xmx512m
-        ports:
-            - "9200:9200"
-            - "9300:9300"
-        volumes:
-             - es_data:/usr/share/elasticsearch/data
-
-    neo4j:
-        image: neo4j:latest
-        container_name: neo4j
-        environment:
-            NEO4J_AUTH: neo4j/password
-        ports:
-            - "7474:7474"
-            - "7687:7687"
-        volumes:
-            - neo4j_data:/data
-
+            - ./logs/mongo:/var/log/mongodb
+            - ./migrations/mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
 volumes:
     postgres_data:
     redis_data:

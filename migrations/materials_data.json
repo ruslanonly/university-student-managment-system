@@ -1,4 +1,6 @@
 {"index":{"_id":1}}
-{"document_id":1,"content":"Introduction to Chemistry","class_id":101,"index_name":"material"}
+{"document_id":1,"content":"Теоретические основы программирования","class_id":1,"index_name":"material"}
 {"index":{"_id":2}}
-{"document_id":2,"content":"Advanced Organic Chemistry","class_id":102,"index_name":"material"}
+{"document_id":2,"content":"Лабораторная работа по радиотехнике","class_id":2,"index_name":"material"}
+{"index":{"_id":3}}
+{"document_id":3,"content":"Практическое занятие по автоматике","class_id":3,"index_name":"material"}
