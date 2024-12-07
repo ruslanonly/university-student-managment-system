@@ -1,5 +1,5 @@
 http_server:
-  address: ":5000"
+  address: ":5001"
   write_timeout: 15
   read_timeout: 15
   idle_timeout: 15
@@ -7,7 +7,7 @@ http_server:
   swagger:
     login: "admin"
     password: "admin"
-    endpoint: "http://localhost:5000"
+    endpoint: "http://localhost:5001"
 cookie:
   secret: "cookie_secret"
   max_age: 3600
@@ -24,6 +24,6 @@ providers:
 auth:
   secret: "Hgpt130dgh"
   access_token_ttl: 3600
-  redirect_url: "http://localhost:5000/swagger/index.html"
+  redirect_url: "http://localhost:5001/swagger/index.html"
 postgres:
-  connection_string: "postgres://user:user@localhost:5432/user"
+  connection_string: "postgres://user:password@localhost:5432/my_database"

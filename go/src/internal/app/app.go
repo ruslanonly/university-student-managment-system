@@ -78,9 +78,10 @@ func (a *App) useProviders() {
 func (a *App) serveHTTP() {
 	httpServer := transport.NewHTTPServer(a.log, &a.cfg.HTTPServer,
 		a.container.authHandler,
+		a.container.lab1Handler,
 	)
-	httpServer.Run()
 	a.httpServer = httpServer
+	httpServer.Run()
 }
 
 func (a *App) Run() {

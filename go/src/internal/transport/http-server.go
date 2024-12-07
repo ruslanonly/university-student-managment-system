@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	authHandler "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/handler"
+	lab1Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab1/handler"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 	"log/slog"
 	"net/http"
@@ -21,6 +22,7 @@ type HTTPServer struct {
 	log         *slog.Logger
 	cfg         *Config
 	authHandler *authHandler.Handler
+	lab1Handler *lab1Handler.Handler
 }
 
 func (s *HTTPServer) useSwagger() {
@@ -39,6 +41,7 @@ func (s *HTTPServer) useSwagger() {
 
 func (s *HTTPServer) initRoutes() {
 	authHandler.Init(s.router, s.authHandler)
+	lab1Handler.Init(s.router, s.lab1Handler)
 }
 
 func (s *HTTPServer) serve() {
@@ -79,7 +82,7 @@ func (s *HTTPServer) Run() {
 	s.serve()
 }
 
-func NewHTTPServer(log *slog.Logger, cfg *Config, authHandler *authHandler.Handler) *HTTPServer {
+func NewHTTPServer(log *slog.Logger, cfg *Config, authHandler *authHandler.Handler, lab1Handler *lab1Handler.Handler) *HTTPServer {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID, middleware.RealIP, middleware.Logger, middleware.Recoverer)
 	return &HTTPServer{
@@ -87,5 +90,6 @@ func NewHTTPServer(log *slog.Logger, cfg *Config, authHandler *authHandler.Handl
 		log:         log,
 		cfg:         cfg,
 		authHandler: authHandler,
+		lab1Handler: lab1Handler,
 	}
 }
