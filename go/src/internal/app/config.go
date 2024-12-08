@@ -26,6 +26,10 @@ type Postgres struct {
 	ConnectionString string `yaml:"connection_string"`
 }
 
+type Elastic struct {
+	ConnectionString string `yaml:"connection_string"`
+}
+
 type config struct {
 	HTTPServer transport.Config `yaml:"http_server"`
 	Logger     logger.Config    `yaml:"logger"`
@@ -33,4 +37,5 @@ type config struct {
 	Cookie     cookieConfig     `yaml:"cookie"`
 	Auth       auth.Config      `yaml:"auth"`
 	Postgres   Postgres         `yaml:"postgres"`
+	Elastic    Elastic          `yaml:"elastic"`
 }

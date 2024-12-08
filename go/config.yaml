@@ -27,3 +27,5 @@ auth:
   redirect_url: "http://localhost:5001/swagger/index.html"
 postgres:
   connection_string: "postgres://user:password@localhost:5432/my_database"
+elastic:
+  connection_string: "http://localhost:9200"

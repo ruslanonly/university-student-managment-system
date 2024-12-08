@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/elastic/go-elasticsearch/v8"
 	authService "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/core/service"
 	authHandler "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/handler"
 	lab1Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab1/handler"
@@ -19,9 +20,17 @@ func (a *App) inject() func() {
 	//	panic(err)
 	//}
 
+	elasticCli, err := elasticsearch.NewClient(elasticsearch.Config{
+		Addresses: []string{a.cfg.Elastic.ConnectionString},
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
 	authServiceImpl := authService.New(&a.cfg.Auth)
 
-	lab1ServiceImpl := lab1Service.New()
+	lab1ServiceImpl := lab1Service.New(elasticCli)
 
 	container := &diContainer{
 		authHandler: authHandler.New(a.log, &a.cfg.Auth, authServiceImpl),
