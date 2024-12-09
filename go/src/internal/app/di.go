@@ -1,7 +1,9 @@
 package app
 
 import (
+	"context"
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	authService "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/core/service"
 	authHandler "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/handler"
 	lab1Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab1/handler"
@@ -13,7 +15,7 @@ type diContainer struct {
 	lab1Handler *lab1Handler.Handler
 }
 
-func (a *App) inject() func() {
+func (a *App) inject(ctx context.Context) func() {
 	//conn, err := pgx.Connect(context.Background(), a.cfg.Postgres.ConnectionString)
 	//
 	//if err != nil {
@@ -28,9 +30,24 @@ func (a *App) inject() func() {
 		panic(err)
 	}
 
+	neoCli, err := neo4j.NewDriverWithContext(
+		a.cfg.Neo.URI,
+		neo4j.BasicAuth(a.cfg.Neo.User, a.cfg.Neo.Password, ""),
+	)
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = neoCli.VerifyConnectivity(ctx)
+
+	if err != nil {
+		panic(err)
+	}
+
 	authServiceImpl := authService.New(&a.cfg.Auth)
 
-	lab1ServiceImpl := lab1Service.New(elasticCli)
+	lab1ServiceImpl := lab1Service.New(elasticCli, neoCli)
 
 	container := &diContainer{
 		authHandler: authHandler.New(a.log, &a.cfg.Auth, authServiceImpl),

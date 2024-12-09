@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/mpvl/unique"
+	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"strings"
 	"time"
 )
@@ -21,6 +23,7 @@ type StudentAttendanceItem struct {
 
 type Service struct {
 	elasticCli *elasticsearch.Client
+	neoCli     neo4j.DriverWithContext
 }
 
 func (s *Service) getClassIDsByPhrase(ctx context.Context, phrase string) ([]int, error) {
@@ -70,7 +73,42 @@ func (s *Service) getClassIDsByPhrase(ctx context.Context, phrase string) ([]int
 }
 
 func (s *Service) getStudentIDsByAttendance(ctx context.Context, courseIDs []int, periodStart, periodEnd time.Time) ([]int, error) {
-	return make([]int, 0), nil
+	session := s.neoCli.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+
+	defer func() {
+		_ = session.Close(ctx)
+	}()
+
+	query := `
+			MATCH (c: Class) -[:SCHEDULED_AT]-> (sch: Schedule) -[:FOR_GROUP]-> (g: Group) -[:HAS_STUDENT]-> (st: Student)
+			WHERE c.id IN $courseIDs
+			RETURN st.id;
+		`
+
+	params := map[string]any{
+		"courseIDs": courseIDs,
+	}
+
+	result, err := session.Run(ctx, query, params)
+
+	if err != nil {
+		return nil, fmt.Errorf("error getting response: %s", err)
+	}
+
+	ids := make([]int, 0)
+
+	for result.Next(ctx) {
+		record := result.Record()
+		id, ok := record.Values[0].(int64)
+		if !ok {
+			continue
+		}
+		ids = append(ids, int(id))
+	}
+
+	unique.Ints(&ids)
+
+	return ids, nil
 }
 
 func (s *Service) getStudentWithBaddestAttendance(ctx context.Context, studentIDs []int, periodStart, periodEnd time.Time) ([]StudentAttendanceItem, error) {
@@ -121,8 +159,9 @@ func (s *Service) Execute(ctx context.Context, in In) ([]ReportItem, error) {
 	return result, nil
 }
 
-func New(elasticCli *elasticsearch.Client) *Service {
+func New(elasticCli *elasticsearch.Client, neoCli neo4j.DriverWithContext) *Service {
 	return &Service{
 		elasticCli: elasticCli,
+		neoCli:     neoCli,
 	}
 }

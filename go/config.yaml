@@ -29,3 +29,7 @@ postgres:
   connection_string: "postgres://user:password@localhost:5432/my_database"
 elastic:
   connection_string: "http://localhost:9200"
+neo:
+  uri: "neo4j://localhost:7687"
+  user: "neo4j"
+  password: "password"

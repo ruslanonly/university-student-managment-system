@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"flag"
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/sessions"
@@ -92,7 +93,7 @@ func (a *App) Run() {
 
 	a.useCookies()
 	a.useProviders()
-	cleanup := a.inject()
+	cleanup := a.inject(context.Background())
 	defer cleanup()
 	a.serveHTTP()
 }

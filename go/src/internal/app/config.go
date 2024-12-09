@@ -30,6 +30,12 @@ type Elastic struct {
 	ConnectionString string `yaml:"connection_string"`
 }
 
+type Neo struct {
+	URI      string `yaml:"uri"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+}
+
 type config struct {
 	HTTPServer transport.Config `yaml:"http_server"`
 	Logger     logger.Config    `yaml:"logger"`
@@ -38,4 +44,5 @@ type config struct {
 	Auth       auth.Config      `yaml:"auth"`
 	Postgres   Postgres         `yaml:"postgres"`
 	Elastic    Elastic          `yaml:"elastic"`
+	Neo        Neo              `yaml:"neo"`
 }
