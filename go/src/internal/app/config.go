@@ -36,6 +36,13 @@ type Neo struct {
 	Password string `yaml:"password"`
 }
 
+type Redis struct {
+	Host     string `yaml:"host"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	DB       int    `yaml:"db"`
+}
+
 type config struct {
 	HTTPServer transport.Config `yaml:"http_server"`
 	Logger     logger.Config    `yaml:"logger"`
@@ -45,4 +52,5 @@ type config struct {
 	Postgres   Postgres         `yaml:"postgres"`
 	Elastic    Elastic          `yaml:"elastic"`
 	Neo        Neo              `yaml:"neo"`
+	Redis      Redis            `yaml:"redis"`
 }

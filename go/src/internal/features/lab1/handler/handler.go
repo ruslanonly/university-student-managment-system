@@ -57,7 +57,6 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res.WriteJSON(w, http.StatusOK, result)
-	res.WriteJSON(w, http.StatusOK, result)
 }
 
 func New(s *service.Service) *Handler {

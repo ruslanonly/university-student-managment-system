@@ -5,6 +5,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/jackc/pgx/v4"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"github.com/redis/go-redis/v9"
 	authService "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/core/service"
 	authHandler "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/handler"
 	lab1Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab1/handler"
@@ -46,9 +47,16 @@ func (a *App) inject(ctx context.Context) func() {
 		panic(err)
 	}
 
+	redisCli := redis.NewClient(&redis.Options{
+		Addr:     a.cfg.Redis.Host,
+		Username: a.cfg.Redis.User,
+		Password: a.cfg.Redis.Password,
+		DB:       a.cfg.Redis.DB,
+	})
+
 	authServiceImpl := authService.New(&a.cfg.Auth)
 
-	lab1ServiceImpl := lab1Service.New(elasticCli, neoCli, pgCli)
+	lab1ServiceImpl := lab1Service.New(elasticCli, neoCli, pgCli, redisCli)
 
 	container := &diContainer{
 		authHandler: authHandler.New(a.log, &a.cfg.Auth, authServiceImpl),
@@ -59,5 +67,6 @@ func (a *App) inject(ctx context.Context) func() {
 
 	return func() {
 		_ = pgCli.Close(context.Background())
+		_ = redisCli.Close()
 	}
 }

@@ -4,14 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/jackc/pgx/v4"
 	"github.com/lib/pq"
 	"github.com/mpvl/unique"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
-	"strings"
-	"time"
+	"github.com/redis/go-redis/v9"
 )
 
 const (
@@ -23,10 +25,16 @@ type StudentAttendanceItem struct {
 	Attendance int
 }
 
+type Student struct {
+	ID   int
+	Name string
+}
+
 type Service struct {
 	elasticCli *elasticsearch.Client
 	neoCli     neo4j.DriverWithContext
 	pgCli      *pgx.Conn
+	redisCli   *redis.Client
 }
 
 func (s *Service) getClassIDsByPhrase(ctx context.Context, phrase string) ([]int, error) {
@@ -156,7 +164,20 @@ func (s *Service) getStudentWithBaddestAttendance(ctx context.Context, studentID
 }
 
 func (s *Service) getStudentFullName(ctx context.Context, studentID int) (string, error) {
-	return "", nil
+	key := fmt.Sprintf("student:%d", studentID)
+	result, err := s.redisCli.HMGet(ctx, key, "full_name").Result()
+
+	if err != nil {
+		return "", fmt.Errorf("error getting student full name: %s", err)
+	}
+
+	name, ok := result[0].(string)
+
+	if !ok {
+		return "", fmt.Errorf("error getting student full name")
+	}
+
+	return name, nil
 }
 
 func (s *Service) Execute(ctx context.Context, in In) ([]ReportItem, error) {
@@ -178,31 +199,30 @@ func (s *Service) Execute(ctx context.Context, in In) ([]ReportItem, error) {
 		return nil, err
 	}
 
-	result := make([]ReportItem, 0)
+	report := make([]ReportItem, 0)
 
-	for _, sa := range studentAttendance {
-		studentFullName, err := s.getStudentFullName(ctx, sa.StudentID)
-
+	for _, attendance := range studentAttendance {
+		name, err := s.getStudentFullName(ctx, attendance.StudentID)
 		if err != nil {
 			return nil, err
 		}
-
-		result = append(result, ReportItem{
-			StudentFullName: studentFullName,
-			Attendance:      sa.Attendance,
+		report = append(report, ReportItem{
+			StudentFullName: name,
+			Attendance:      attendance.Attendance,
 			PeriodStart:     in.PeriodStart,
 			PeriodEnd:       in.PeriodEnd,
 			Phrase:          in.Phrase,
 		})
 	}
 
-	return result, nil
+	return report, nil
 }
 
-func New(elasticCli *elasticsearch.Client, neoCli neo4j.DriverWithContext, pgCli *pgx.Conn) *Service {
+func New(elasticCli *elasticsearch.Client, neoCli neo4j.DriverWithContext, pgCli *pgx.Conn, redisCli *redis.Client) *Service {
 	return &Service{
 		elasticCli: elasticCli,
 		neoCli:     neoCli,
 		pgCli:      pgCli,
+		redisCli:   redisCli,
 	}
 }

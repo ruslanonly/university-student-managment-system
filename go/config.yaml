@@ -33,3 +33,8 @@ neo:
   uri: "neo4j://localhost:7687"
   user: "neo4j"
   password: "password"
+redis:
+  host: "localhost:6379"
+  user: ""
+  password: ""
+  db: 0
