@@ -80,6 +80,8 @@ func (a *App) serveHTTP() {
 	httpServer := transport.NewHTTPServer(a.log, &a.cfg.HTTPServer,
 		a.container.authHandler,
 		a.container.lab1Handler,
+		a.container.lab2Handler,
+		a.container.lab3Handler,
 	)
 	a.httpServer = httpServer
 	httpServer.Run()

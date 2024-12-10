@@ -12,12 +12,15 @@ import (
 	lab1Service "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab1/service"
 	lab2Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab2/handler"
 	lab2Service "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab2/service"
+	lab3Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab3/handler"
+	lab3Service "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab3/service"
 )
 
 type diContainer struct {
 	authHandler *authHandler.Handler
 	lab1Handler *lab1Handler.Handler
 	lab2Handler *lab2Handler.Handler
+	lab3Handler *lab3Handler.Handler
 }
 
 func (a *App) inject(ctx context.Context) func() {
@@ -63,10 +66,13 @@ func (a *App) inject(ctx context.Context) func() {
 
 	lab2ServiceImpl := lab2Service.New()
 
+	lab3ServiceImpl := lab3Service.New()
+
 	container := &diContainer{
 		authHandler: authHandler.New(a.log, &a.cfg.Auth, authServiceImpl),
 		lab1Handler: lab1Handler.New(lab1ServiceImpl),
 		lab2Handler: lab2Handler.New(lab2ServiceImpl),
+		lab3Handler: lab3Handler.New(lab3ServiceImpl),
 	}
 
 	a.container = container
