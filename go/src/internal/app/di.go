@@ -14,6 +14,8 @@ import (
 	lab2Service "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab2/service"
 	lab3Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab3/handler"
 	lab3Service "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab3/service"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type diContainer struct {
@@ -60,13 +62,28 @@ func (a *App) inject(ctx context.Context) func() {
 		DB:       a.cfg.Redis.DB,
 	})
 
+	mongoServerAPI := options.ServerAPI(options.ServerAPIVersion1)
+	mongoOpts := options.Client().ApplyURI(a.cfg.Mongo.Address).SetServerAPIOptions(mongoServerAPI)
+
+	mongoCli, err := mongo.Connect(mongoOpts)
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = mongoCli.Ping(ctx, nil)
+
+	if err != nil {
+		panic(err)
+	}
+
 	authServiceImpl := authService.New(&a.cfg.Auth)
 
 	lab1ServiceImpl := lab1Service.New(elasticCli, neoCli, pgCli, redisCli)
 
-	lab2ServiceImpl := lab2Service.New()
+	lab2ServiceImpl := lab2Service.New(elasticCli, neoCli, pgCli, redisCli, mongoCli)
 
-	lab3ServiceImpl := lab3Service.New()
+	lab3ServiceImpl := lab3Service.New(elasticCli, neoCli, pgCli, redisCli, mongoCli)
 
 	container := &diContainer{
 		authHandler: authHandler.New(a.log, &a.cfg.Auth, authServiceImpl),
@@ -80,5 +97,6 @@ func (a *App) inject(ctx context.Context) func() {
 	return func() {
 		_ = pgCli.Close(context.Background())
 		_ = redisCli.Close()
+		_ = mongoCli.Disconnect(ctx)
 	}
 }

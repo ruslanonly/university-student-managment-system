@@ -43,6 +43,10 @@ type Redis struct {
 	DB       int    `yaml:"db"`
 }
 
+type Mongo struct {
+	Address string `yaml:"address"`
+}
+
 type config struct {
 	HTTPServer transport.Config `yaml:"http_server"`
 	Logger     logger.Config    `yaml:"logger"`
@@ -53,4 +57,5 @@ type config struct {
 	Elastic    Elastic          `yaml:"elastic"`
 	Neo        Neo              `yaml:"neo"`
 	Redis      Redis            `yaml:"redis"`
+	Mongo      Mongo            `yaml:"mongo"`
 }

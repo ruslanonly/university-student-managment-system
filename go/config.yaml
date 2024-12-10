@@ -38,3 +38,5 @@ redis:
   user: ""
   password: ""
   db: 0
+mongo:
+  address: "mongodb://user:password@localhost:27017"
