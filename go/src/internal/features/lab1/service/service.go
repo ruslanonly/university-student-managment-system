@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/jackc/pgx/v4"
+	"github.com/lib/pq"
 	"github.com/mpvl/unique"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"strings"
@@ -24,6 +26,7 @@ type StudentAttendanceItem struct {
 type Service struct {
 	elasticCli *elasticsearch.Client
 	neoCli     neo4j.DriverWithContext
+	pgCli      *pgx.Conn
 }
 
 func (s *Service) getClassIDsByPhrase(ctx context.Context, phrase string) ([]int, error) {
@@ -72,7 +75,7 @@ func (s *Service) getClassIDsByPhrase(ctx context.Context, phrase string) ([]int
 	return classIDs, nil
 }
 
-func (s *Service) getStudentIDsByAttendance(ctx context.Context, courseIDs []int, periodStart, periodEnd time.Time) ([]int, error) {
+func (s *Service) getStudentIDsByAttendance(ctx context.Context, courseIDs []int) ([]int, error) {
 	session := s.neoCli.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 
 	defer func() {
@@ -112,7 +115,44 @@ func (s *Service) getStudentIDsByAttendance(ctx context.Context, courseIDs []int
 }
 
 func (s *Service) getStudentWithBaddestAttendance(ctx context.Context, studentIDs []int, periodStart, periodEnd time.Time) ([]StudentAttendanceItem, error) {
-	return []StudentAttendanceItem{}, nil
+	query := `
+		SELECT
+			a.student_id,
+			ROUND(SUM(CASE WHEN a.status = '+' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS attendance_percentage
+		FROM (
+				SELECT *
+				FROM attendances
+				WHERE student_id = ANY($1)
+				AND date >= $2
+				AND date <= $3
+			 ) AS a
+		GROUP BY a.student_id
+		ORDER BY attendance_percentage
+		LIMIT 10;
+	`
+
+	args := make([]interface{}, 0)
+	args = append(args, pq.Array(studentIDs), periodStart, periodEnd)
+
+	rows, err := s.pgCli.Query(ctx, query, args...)
+
+	if err != nil {
+		return nil, fmt.Errorf("error getting response: %s", err)
+	}
+
+	defer rows.Close()
+	result := make([]StudentAttendanceItem, 0)
+
+	for rows.Next() {
+		var item StudentAttendanceItem
+		err := rows.Scan(&item.StudentID, &item.Attendance)
+		if err != nil {
+			return nil, fmt.Errorf("error scanning row: %s", err)
+		}
+		result = append(result, item)
+	}
+
+	return result, nil
 }
 
 func (s *Service) getStudentFullName(ctx context.Context, studentID int) (string, error) {
@@ -126,7 +166,7 @@ func (s *Service) Execute(ctx context.Context, in In) ([]ReportItem, error) {
 		return nil, err
 	}
 
-	studentIDs, err := s.getStudentIDsByAttendance(ctx, courseIDs, in.PeriodStart, in.PeriodEnd)
+	studentIDs, err := s.getStudentIDsByAttendance(ctx, courseIDs)
 
 	if err != nil {
 		return nil, err
@@ -159,9 +199,10 @@ func (s *Service) Execute(ctx context.Context, in In) ([]ReportItem, error) {
 	return result, nil
 }
 
-func New(elasticCli *elasticsearch.Client, neoCli neo4j.DriverWithContext) *Service {
+func New(elasticCli *elasticsearch.Client, neoCli neo4j.DriverWithContext, pgCli *pgx.Conn) *Service {
 	return &Service{
 		elasticCli: elasticCli,
 		neoCli:     neoCli,
+		pgCli:      pgCli,
 	}
 }

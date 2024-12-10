@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/jackc/pgx/v4"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	authService "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/core/service"
 	authHandler "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/handler"
@@ -16,11 +17,11 @@ type diContainer struct {
 }
 
 func (a *App) inject(ctx context.Context) func() {
-	//conn, err := pgx.Connect(context.Background(), a.cfg.Postgres.ConnectionString)
-	//
-	//if err != nil {
-	//	panic(err)
-	//}
+	pgCli, err := pgx.Connect(context.Background(), a.cfg.Postgres.ConnectionString)
+
+	if err != nil {
+		panic(err)
+	}
 
 	elasticCli, err := elasticsearch.NewClient(elasticsearch.Config{
 		Addresses: []string{a.cfg.Elastic.ConnectionString},
@@ -47,7 +48,7 @@ func (a *App) inject(ctx context.Context) func() {
 
 	authServiceImpl := authService.New(&a.cfg.Auth)
 
-	lab1ServiceImpl := lab1Service.New(elasticCli, neoCli)
+	lab1ServiceImpl := lab1Service.New(elasticCli, neoCli, pgCli)
 
 	container := &diContainer{
 		authHandler: authHandler.New(a.log, &a.cfg.Auth, authServiceImpl),
@@ -57,6 +58,6 @@ func (a *App) inject(ctx context.Context) func() {
 	a.container = container
 
 	return func() {
-		//_ = conn.Close(context.Background())
+		_ = pgCli.Close(context.Background())
 	}
 }
