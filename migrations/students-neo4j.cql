@@ -49,19 +49,19 @@ CREATE (:Specialization {id: 4, name: 'Информационные систем
 CREATE (:Specialization {id: 5, name: 'Программная инженерия'});
 
 // 2.5 Courses
-CREATE (:Course {id: 1, name: 'Основы программирования'});
-CREATE (:Course {id: 2, name: 'Системы связи'});
-CREATE (:Course {id: 3, name: 'Теория автоматического управления'});
-CREATE (:Course {id: 4, name: 'Математические модели и методы безопасного функционирования компонент программного обеспечения'});
-CREATE (:Course {id: 5, name: 'Методы и средства сборки и интеграции программных модулей, сервисов и компонентов'});
-CREATE (:Course {id: 6, name: 'Методы оценки эффективности информационных систем'});
-CREATE (:Course {id: 7, name: 'Облачные технологии'});
-CREATE (:Course {id: 8, name: 'Проектирование архитектуры программного обеспечения'});
-CREATE (:Course {id: 9, name: 'Разработка мобильных компонент анализа безопасности программного обеспечения'});
-CREATE (:Course {id: 10, name: 'Разработка программного решения для стартапа'});
-CREATE (:Course {id: 11, name: 'Создание инструментальных средств разработки программного обеспечения'});
-CREATE (:Course {id: 12, name: 'Управление информационно-технологическими проектами'});
-CREATE (:Course {id: 13, name: 'Разработка безопасного программного обеспечения'});
+CREATE (:Course {id: 1, name: 'Основы программирования', special: true});
+CREATE (:Course {id: 2, name: 'Системы связи', special: true});
+CREATE (:Course {id: 3, name: 'Теория автоматического управления', special: false});
+CREATE (:Course {id: 4, name: 'Математические модели и методы безопасного функционирования компонент программного обеспечения', special: true});
+CREATE (:Course {id: 5, name: 'Методы и средства сборки и интеграции программных модулей, сервисов и компонентов', special: false});
+CREATE (:Course {id: 6, name: 'Методы оценки эффективности информационных систем', special: true});
+CREATE (:Course {id: 7, name: 'Облачные технологии', special: false});
+CREATE (:Course {id: 8, name: 'Проектирование архитектуры программного обеспечения', special: true});
+CREATE (:Course {id: 9, name: 'Разработка мобильных компонент анализа безопасности программного обеспечения', special: true});
+CREATE (:Course {id: 10, name: 'Разработка программного решения для стартапа', special: true});
+CREATE (:Course {id: 11, name: 'Создание инструментальных средств разработки программного обеспечения', special: true});
+CREATE (:Course {id: 12, name: 'Управление информационно-технологическими проектами', special: true});
+CREATE (:Course {id: 13, name: 'Разработка безопасного программного обеспечения', special: false});
 
 // 2.6 Groups
 CREATE (:Group {id: 1, name: 'БСБО-01-21'});
@@ -161,14 +161,59 @@ CREATE (st)-[:BELONGS_TO]->(g);
 
 // 3.11 Create ATTENDS Relationships Based on Attendance Status '+'
 UNWIND [
-    {status: '+', date: datetime('2024-12-06T09:00:00'), student_id: 1, schedule_id: 1},
-    {status: '+', date: datetime('2024-12-06T11:00:00'), student_id: 4, schedule_id: 2},
-    {status: '+', date: datetime('2024-12-07T14:00:00'), student_id: 7, schedule_id: 3},
-    {status: '+', date: datetime('2024-12-07T16:00:00'), student_id: 10, schedule_id: 4},
-    {status: '+', date: datetime('2024-12-08T12:00:00'), student_id: 13, schedule_id: 6},
-    {status: '+', date: datetime('2024-12-09T09:00:00'), student_id: 16, schedule_id: 7},
-    {status: '+', date: datetime('2024-12-10T13:00:00'), student_id: 19, schedule_id: 9},
-    {status: '+', date: datetime('2024-12-10T15:00:00'), student_id: 21, schedule_id: 10}
+    { status: '+', date: datetime('2024-12-09T11:00:00'), student_id: 1, schedule_id: 8 },
+    { status: '+', date: datetime('2024-12-09T11:00:00'), student_id: 3, schedule_id: 8 },
+    { status: '+', date: datetime('2024-12-09T11:00:00'), student_id: 4, schedule_id: 8 },
+    { status: '+', date: datetime('2024-12-09T11:00:00'), student_id: 6, schedule_id: 8 },
+    { status: '+', date: datetime('2024-12-09T11:00:00'), student_id: 7, schedule_id: 8 },
+    { status: '+', date: datetime('2024-12-09T11:00:00'), student_id: 8, schedule_id: 8 },
+    { status: '+', date: datetime('2024-12-09T11:00:00'), student_id: 10, schedule_id: 8 },
+    { status: '+', date: datetime('2024-12-09T11:00:00'), student_id: 11, schedule_id: 8 },
+    { status: '+', date: datetime('2024-12-08T10:00:00'), student_id: 4, schedule_id: 5 },
+    { status: '+', date: datetime('2024-12-08T10:00:00'), student_id: 5, schedule_id: 5 },
+    { status: '+', date: datetime('2024-12-08T10:00:00'), student_id: 6, schedule_id: 5 },
+    { status: '+', date: datetime('2024-12-08T10:00:00'), student_id: 7, schedule_id: 5 },
+    { status: '+', date: datetime('2024-12-08T10:00:00'), student_id: 8, schedule_id: 5 },
+    { status: '+', date: datetime('2024-12-08T10:00:00'), student_id: 9, schedule_id: 5 },
+    { status: '+', date: datetime('2024-12-08T10:00:00'), student_id: 10, schedule_id: 5 },
+    { status: '+', date: datetime('2024-12-06T09:00:00'), student_id: 1, schedule_id: 1 },
+    { status: '+', date: datetime('2024-12-06T09:00:00'), student_id: 3, schedule_id: 1 },
+    { status: '+', date: datetime('2024-12-06T09:00:00'), student_id: 4, schedule_id: 1 },
+    { status: '+', date: datetime('2024-12-06T09:00:00'), student_id: 6, schedule_id: 1 },
+    { status: '+', date: datetime('2024-12-06T09:00:00'), student_id: 7, schedule_id: 1 },
+    { status: '+', date: datetime('2024-12-06T09:00:00'), student_id: 8, schedule_id: 1 },
+    { status: '+', date: datetime('2024-12-06T09:00:00'), student_id: 9, schedule_id: 1 },
+    { status: '+', date: datetime('2024-12-06T09:00:00'), student_id: 10, schedule_id: 1 },
+    { status: '+', date: datetime('2024-12-06T09:00:00'), student_id: 11, schedule_id: 1 },
+    { status: '+', date: datetime('2024-12-10T15:00:00'), student_id: 12, schedule_id: 10 },
+    { status: '+', date: datetime('2024-12-10T15:00:00'), student_id: 13, schedule_id: 10 },
+    { status: '+', date: datetime('2024-12-10T15:00:00'), student_id: 14, schedule_id: 10 },
+    { status: '+', date: datetime('2024-12-09T09:00:00'), student_id: 12, schedule_id: 7 },
+    { status: '+', date: datetime('2024-12-09T09:00:00'), student_id: 13, schedule_id: 7 },
+    { status: '+', date: datetime('2024-12-07T14:00:00'), student_id: 13, schedule_id: 3 },
+    { status: '+', date: datetime('2024-12-06T11:00:00'), student_id: 12, schedule_id: 2 },
+    { status: '+', date: datetime('2024-12-06T11:00:00'), student_id: 14, schedule_id: 2 },
+    { status: '+', date: datetime('2024-12-08T12:00:00'), student_id: 16, schedule_id: 6 },
+    { status: '+', date: datetime('2024-12-08T12:00:00'), student_id: 18, schedule_id: 6 },
+    { status: '+', date: datetime('2024-12-08T12:00:00'), student_id: 19, schedule_id: 6 },
+    { status: '+', date: datetime('2024-12-08T12:00:00'), student_id: 20, schedule_id: 6 },
+    { status: '+', date: datetime('2024-12-08T12:00:00'), student_id: 21, schedule_id: 6 },
+    { status: '+', date: datetime('2024-12-08T12:00:00'), student_id: 22, schedule_id: 6 },
+    { status: '+', date: datetime('2024-12-08T12:00:00'), student_id: 23, schedule_id: 6 },
+    { status: '+', date: datetime('2024-12-08T12:00:00'), student_id: 24, schedule_id: 6 },
+    { status: '+', date: datetime('2024-12-10T13:00:00'), student_id: 15, schedule_id: 9 },
+    { status: '+', date: datetime('2024-12-10T13:00:00'), student_id: 19, schedule_id: 9 },
+    { status: '+', date: datetime('2024-12-10T13:00:00'), student_id: 20, schedule_id: 9 },
+    { status: '+', date: datetime('2024-12-10T13:00:00'), student_id: 21, schedule_id: 9 },
+    { status: '+', date: datetime('2024-12-10T13:00:00'), student_id: 22, schedule_id: 9 },
+    { status: '+', date: datetime('2024-12-10T13:00:00'), student_id: 24, schedule_id: 9 },
+    { status: '+', date: datetime('2024-12-07T16:00:00'), student_id: 15, schedule_id: 4 },
+    { status: '+', date: datetime('2024-12-07T16:00:00'), student_id: 16, schedule_id: 4 },
+    { status: '+', date: datetime('2024-12-07T16:00:00'), student_id: 18, schedule_id: 4 },
+    { status: '+', date: datetime('2024-12-07T16:00:00'), student_id: 19, schedule_id: 4 },
+    { status: '+', date: datetime('2024-12-07T16:00:00'), student_id: 20, schedule_id: 4 },
+    { status: '+', date: datetime('2024-12-07T16:00:00'), student_id: 21, schedule_id: 4 },
+    { status: '+', date: datetime('2024-12-07T16:00:00'), student_id: 22, schedule_id: 4 }
 ] AS attendance
 MATCH (st:Student {id: attendance.student_id}), (sc:Schedule {id: attendance.schedule_id})
 CREATE (st)-[:ATTENDS {date: attendance.date}]->(sc);

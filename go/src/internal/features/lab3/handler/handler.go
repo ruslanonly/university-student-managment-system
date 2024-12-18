@@ -15,13 +15,9 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 
 	groupName := query.Get("group_name")
-	groupEnrollmentYear := query.Get("group_enrollment_year")
-	DisciplineTag := query.Get("discipline_tag")
 
 	in := &service.In{
-		GroupName:           groupName,
-		GroupEnrollmentYear: groupEnrollmentYear,
-		DisciplineTag:       DisciplineTag,
+		GroupName: groupName,
 	}
 
 	out, err := h.s.Execute(r.Context(), in)

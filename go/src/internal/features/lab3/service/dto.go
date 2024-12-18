@@ -1,9 +1,7 @@
 package service
 
 type In struct {
-	GroupName           string `json:"group_name"`
-	GroupEnrollmentYear string `json:"group_enrollment_year"`
-	DisciplineTag       string `json:"discipline_tag"`
+	GroupName string `json:"group_name"`
 }
 
 type ReportItem struct {
