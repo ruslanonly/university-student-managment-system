@@ -22,7 +22,7 @@ const (
 
 type StudentAttendanceItem struct {
 	StudentID  int
-	Attendance int
+	Attendance float64
 }
 
 type Student struct {

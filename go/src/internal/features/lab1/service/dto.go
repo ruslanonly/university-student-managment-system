@@ -4,7 +4,7 @@ import "time"
 
 type ReportItem struct {
 	StudentFullName string
-	Attendance      int
+	Attendance      float64
 	PeriodStart     time.Time
 	PeriodEnd       time.Time
 	Phrase          string
