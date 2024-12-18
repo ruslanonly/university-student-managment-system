@@ -15,17 +15,6 @@ services:
             - ./logs/postgres:/var/log/postgresql
             - ./migrations/postgres.sql:/docker-entrypoint-initdb.d/init.sql
         command: ["postgres", "-c", "logging_collector=on", "-c", "log_directory=/var/log/postgresql", "-c", "log_statement=all"]
-
-    redis:
-        image: redis:latest
-        container_name: redis
-        ports:
-            - "6379:6379"
-        volumes:
-            - redis_data:/data
-            - ./logs/redis:/var/log/redis
-            - ./migrations/redis.sh:/some_dir/redis.sh
-        command: ["/some_dir/redis.sh"]
     
     mongodb:
         image: mongo:latest
@@ -42,5 +31,4 @@ services:
             - ./migrations/mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
 volumes:
     postgres_data:
-    redis_data:
     mongo_data:

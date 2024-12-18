@@ -20,6 +20,9 @@ services:
             - "6379:6379"
         volumes:
             - redis_data:/data
+            - ./logs/redis:/var/log/redis
+            - ./migrations/redis.sh:/some_dir/redis.sh
+        command: ["/some_dir/redis.sh"]
 
     mongodb:
         image: mongo:latest
