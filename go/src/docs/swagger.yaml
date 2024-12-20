@@ -1,4 +1,27 @@
 basePath: /
+definitions:
+  github_com_ruslanonly_university-student-managment-system_src_internal_features_lab1_service.ReportItem:
+    properties:
+      attendance:
+        type: number
+      periodEnd:
+        type: string
+      periodStart:
+        type: string
+      phrase:
+        type: string
+      studentFullName:
+        type: string
+    type: object
+  github_com_ruslanonly_university-student-managment-system_src_internal_features_lab2_service.Lab2ReportItem:
+    properties:
+      capacity:
+        type: integer
+      class_name:
+        type: string
+      course_name:
+        type: string
+    type: object
 info:
   contact: {}
   title: University Report Generation System
@@ -42,4 +65,70 @@ paths:
       summary: Завершить авторизацию по протоколу OAuth 2.0
       tags:
       - OAuth
+  /lab1:
+    get:
+      consumes:
+      - application/json
+      description: Lab1
+      parameters:
+      - description: Фраза для поиска
+        in: query
+        name: phrase
+        required: true
+        type: string
+      - description: Дата начала периода
+        in: query
+        name: period_from
+        required: true
+        type: string
+      - description: Дата окончания периода
+        in: query
+        name: period_to
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_ruslanonly_university-student-managment-system_src_internal_features_lab1_service.ReportItem'
+            type: array
+      summary: Lab1
+      tags:
+      - Lab1
+  /lab2:
+    get:
+      consumes:
+      - application/json
+      description: Lab2
+      parameters:
+      - description: Название курса (дисциплины)
+        in: query
+        name: course_name
+        required: true
+        type: string
+      - description: Год
+        in: query
+        name: year
+        required: true
+        type: string
+      - description: Семестр
+        in: query
+        name: semester
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_ruslanonly_university-student-managment-system_src_internal_features_lab2_service.Lab2ReportItem'
+            type: array
+      summary: Lab2
+      tags:
+      - Lab2
 swagger: "2.0"

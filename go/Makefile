@@ -12,4 +12,6 @@ build:
 	go build -o ${BUILD_DIR}/main.exe ${MAIN_PKG}
 
 swag:
-	swag init -g src/internal/app/app.go -o src/docs
+	swag init --parseDependency --parseInternal -g src/internal/app/app.go -o src/docs
+
+.PHONY: swag
