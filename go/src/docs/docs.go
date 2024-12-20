@@ -72,6 +72,140 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/lab1": {
+            "get": {
+                "description": "Lab1",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lab1"
+                ],
+                "summary": "Lab1",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Фраза для поиска",
+                        "name": "phrase",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Дата начала периода",
+                        "name": "period_from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Дата окончания периода",
+                        "name": "period_to",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_ruslanonly_university-student-managment-system_src_internal_features_lab1_service.ReportItem"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/lab2": {
+            "get": {
+                "description": "Lab2",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lab2"
+                ],
+                "summary": "Lab2",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Название курса (дисциплины)",
+                        "name": "course_name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Год",
+                        "name": "year",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Семестр",
+                        "name": "semester",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_ruslanonly_university-student-managment-system_src_internal_features_lab2_service.Lab2ReportItem"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_ruslanonly_university-student-managment-system_src_internal_features_lab1_service.ReportItem": {
+            "type": "object",
+            "properties": {
+                "attendance": {
+                    "type": "number"
+                },
+                "periodEnd": {
+                    "type": "string"
+                },
+                "periodStart": {
+                    "type": "string"
+                },
+                "phrase": {
+                    "type": "string"
+                },
+                "studentFullName": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_ruslanonly_university-student-managment-system_src_internal_features_lab2_service.Lab2ReportItem": {
+            "type": "object",
+            "properties": {
+                "capacity": {
+                    "type": "integer"
+                },
+                "class_name": {
+                    "type": "string"
+                },
+                "course_name": {
+                    "type": "string"
+                }
+            }
         }
     }
 }`

@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/ruslanonly/university-student-managment-system/src/internal/features/lab1/service"
 	"github.com/ruslanonly/university-student-managment-system/src/pkg/api/res"
-	"net/http"
-	"time"
 )
 
 type Handler struct {
