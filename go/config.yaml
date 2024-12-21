@@ -23,7 +23,7 @@ providers:
       - "profile"
 auth:
   secret: "Hgpt130dgh"
-  access_token_ttl: 3600
+  access_token_ttl: 3600000000000
   redirect_url: "http://localhost:5001/swagger/index.html"
 postgres:
   connection_string: "postgres://user:password@localhost:5432/my_database"

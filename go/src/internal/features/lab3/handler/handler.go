@@ -45,6 +45,9 @@ func New(s *service.Service) *Handler {
 	}
 }
 
-func Init(r *chi.Mux, h *Handler) {
-	r.Get("/lab3", h.Handle)
+func Init(r *chi.Mux, h *Handler, middlewares ...func(handler http.Handler) http.Handler) {
+	r.Group(func(r chi.Router) {
+		r.Use(middlewares...)
+		r.Get("/lab3", h.Handle)
+	})
 }

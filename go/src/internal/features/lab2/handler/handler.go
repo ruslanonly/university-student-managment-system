@@ -44,8 +44,8 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	in := &service.In{
-		CourseName:	courseName,
-		Year: 		parsedYear,
+		CourseName: courseName,
+		Year:       parsedYear,
 		Semester:   parsedSemester,
 	}
 
@@ -65,6 +65,9 @@ func New(s *service.Service) *Handler {
 	}
 }
 
-func Init(r *chi.Mux, h *Handler) {
-	r.Get("/lab2", h.Handle)
+func Init(r *chi.Mux, h *Handler, middlewares ...func(handler http.Handler) http.Handler) {
+	r.Group(func(r chi.Router) {
+		r.Use(middlewares...)
+		r.Get("/lab2", h.Handle)
+	})
 }

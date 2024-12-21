@@ -30,7 +30,7 @@ func CreateAccessToken(secretKey string, userID string, ttl int) (AccessToken, e
 
 func VerifyAccessToken(accessToken AccessToken, secret string) error {
 	token, err := jwt.Parse(string(accessToken), func(token *jwt.Token) (interface{}, error) {
-		return secret, nil
+		return []byte(secret), nil
 	})
 
 	if err != nil {

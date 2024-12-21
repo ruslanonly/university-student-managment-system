@@ -4,25 +4,29 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	authHandler "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/handler"
-	lab1Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab1/handler"
-	lab2Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab2/handler"
-	lab3Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab3/handler"
-	httpSwagger "github.com/swaggo/http-swagger/v2"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
+
+	authService "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/core/service"
+	authHandler "github.com/ruslanonly/university-student-managment-system/src/internal/features/auth/handler"
+	lab1Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab1/handler"
+	lab2Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab2/handler"
+	lab3Handler "github.com/ruslanonly/university-student-managment-system/src/internal/features/lab3/handler"
 )
 
 type HTTPServer struct {
 	router      *chi.Mux
 	log         *slog.Logger
 	cfg         *Config
+	authService *authService.AuthService
 	authHandler *authHandler.Handler
 	lab1Handler *lab1Handler.Handler
 	lab2Handler *lab2Handler.Handler
@@ -44,10 +48,11 @@ func (s *HTTPServer) useSwagger() {
 }
 
 func (s *HTTPServer) initRoutes() {
+	authMiddleware := authHandler.CreateAuthMiddleware(s.authService)
 	authHandler.Init(s.router, s.authHandler)
-	lab1Handler.Init(s.router, s.lab1Handler)
-	lab2Handler.Init(s.router, s.lab2Handler)
-	lab3Handler.Init(s.router, s.lab3Handler)
+	lab1Handler.Init(s.router, s.lab1Handler, authMiddleware)
+	lab2Handler.Init(s.router, s.lab2Handler, authMiddleware)
+	lab3Handler.Init(s.router, s.lab3Handler, authMiddleware)
 }
 
 func (s *HTTPServer) serve() {
@@ -88,13 +93,14 @@ func (s *HTTPServer) Run() {
 	s.serve()
 }
 
-func NewHTTPServer(log *slog.Logger, cfg *Config, authHandler *authHandler.Handler, lab1Handler *lab1Handler.Handler, lab2Handler *lab2Handler.Handler, lab3Handler *lab3Handler.Handler) *HTTPServer {
+func NewHTTPServer(log *slog.Logger, cfg *Config, authService *authService.AuthService, authHandler *authHandler.Handler, lab1Handler *lab1Handler.Handler, lab2Handler *lab2Handler.Handler, lab3Handler *lab3Handler.Handler) *HTTPServer {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID, middleware.RealIP, middleware.Logger, middleware.Recoverer)
 	return &HTTPServer{
 		router:      r,
 		log:         log,
 		cfg:         cfg,
+		authService: authService,
 		authHandler: authHandler,
 		lab1Handler: lab1Handler,
 		lab2Handler: lab2Handler,

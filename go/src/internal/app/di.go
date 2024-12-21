@@ -19,6 +19,7 @@ import (
 )
 
 type diContainer struct {
+	authService *authService.AuthService
 	authHandler *authHandler.Handler
 	lab1Handler *lab1Handler.Handler
 	lab2Handler *lab2Handler.Handler
@@ -86,6 +87,7 @@ func (a *App) inject(ctx context.Context) func() {
 	lab3ServiceImpl := lab3Service.New(elasticCli, neoCli, pgCli, redisCli, mongoCli)
 
 	container := &diContainer{
+		authService: authServiceImpl,
 		authHandler: authHandler.New(a.log, &a.cfg.Auth, authServiceImpl),
 		lab1Handler: lab1Handler.New(lab1ServiceImpl),
 		lab2Handler: lab2Handler.New(lab2ServiceImpl),
