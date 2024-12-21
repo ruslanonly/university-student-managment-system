@@ -170,6 +170,41 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/lab3": {
+            "get": {
+                "description": "Lab3",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lab3"
+                ],
+                "summary": "Lab3",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Название группы",
+                        "name": "group_name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_ruslanonly_university-student-managment-system_src_internal_features_lab3_service.Lab3ReportItem"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -204,6 +239,40 @@ const docTemplate = `{
                 },
                 "course_name": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_ruslanonly_university-student-managment-system_src_internal_features_lab3_service.Lab3ReportItem": {
+            "type": "object",
+            "properties": {
+                "course_name": {
+                    "type": "string"
+                },
+                "group_name": {
+                    "type": "string"
+                },
+                "students_attendance": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_ruslanonly_university-student-managment-system_src_internal_features_lab3_service.Lab3ReportStudent"
+                    }
+                }
+            }
+        },
+        "github_com_ruslanonly_university-student-managment-system_src_internal_features_lab3_service.Lab3ReportStudent": {
+            "type": "object",
+            "properties": {
+                "planned_quantity": {
+                    "type": "integer"
+                },
+                "student_full_name": {
+                    "type": "string"
+                },
+                "student_grade_book_id": {
+                    "type": "integer"
+                },
+                "visited_quantity": {
+                    "type": "integer"
                 }
             }
         }

@@ -22,6 +22,28 @@ definitions:
       course_name:
         type: string
     type: object
+  github_com_ruslanonly_university-student-managment-system_src_internal_features_lab3_service.Lab3ReportItem:
+    properties:
+      course_name:
+        type: string
+      group_name:
+        type: string
+      students_attendance:
+        items:
+          $ref: '#/definitions/github_com_ruslanonly_university-student-managment-system_src_internal_features_lab3_service.Lab3ReportStudent'
+        type: array
+    type: object
+  github_com_ruslanonly_university-student-managment-system_src_internal_features_lab3_service.Lab3ReportStudent:
+    properties:
+      planned_quantity:
+        type: integer
+      student_full_name:
+        type: string
+      student_grade_book_id:
+        type: integer
+      visited_quantity:
+        type: integer
+    type: object
 info:
   contact: {}
   title: University Report Generation System
@@ -131,4 +153,27 @@ paths:
       summary: Lab2
       tags:
       - Lab2
+  /lab3:
+    get:
+      consumes:
+      - application/json
+      description: Lab3
+      parameters:
+      - description: Название группы
+        in: query
+        name: group_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_ruslanonly_university-student-managment-system_src_internal_features_lab3_service.Lab3ReportItem'
+            type: array
+      summary: Lab3
+      tags:
+      - Lab3
 swagger: "2.0"
